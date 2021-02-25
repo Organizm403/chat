@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple chat bot</title>
+  <style>
+    .body {
+      position: relative;
+      padding: 0px;
+      margin: 0px;
+      font-size: 40px;
+      background-color: #0872a321;
+    }
+    .chat-panel {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 50vw;
+      background: url(https://thumbs.dreamstime.com/b/%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD-%D1%81%D0%BE%D0%BE%D0%B1%D1%89%D0%B5%D0%BD%D0%B8%D1%8F-%D1%8D%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%BE%D0%BD%D0%BD%D0%BE%D0%B9-%D0%BF%D0%BE%D1%87%D1%82%D1%8B-%D0%B1%D0%B5%D0%B7%D1%88%D0%BE%D0%B2%D0%BD%D0%B0%D1%8F-%D0%BD%D0%B0-%D0%B3%D0%BE%D0%BB%D1%83%D0%B1%D0%BE%D0%B9-%D1%84%D0%BE%D0%BD%D0%B0-%D0%BF%D0%BE%D1%87%D1%82%D0%BE%D0%B2%D0%BE%D0%B9-195520252.jpg);
+      padding: 0px;
+      margin: 0px;
+    }
+    .chat-messages-wrap {
+      position: relative;
+      flex: 1 1 auto;
+      overflow-y: scroll;
+    }
+    .chat-messages {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      background: #f4fafd21;
+      min-height: 100%; 
+    }
+    .chat-input {
+      position: relative;
+      display: flex;
+      flex: 0 0 auto;
+    }
+    .chat-input>input[name="message"] {
+      flex-grow: 1;
+      font-size: 20px;
+    }
+    .button-send {
+      background: url(https://cdn2.iconfinder.com/data/icons/dark-action-bar-2/96/send-128.png) no-repeat;
+      background-size: contain;
+      width: 40px;
+      height: 40px;
+    }
+    .message {
+      position: relative;
+      display: inline-block;
+      align-self: flex-start;
+      padding: 8px;
+      border-radius: 8px;
+      margin: 0px 8px 4px;
+      max-width: 90%;
+      animation: show-anim 0.5s ease-in 0.1s both;
+    }
+    .my-message {
+      align-self: flex-end;
+      background: #eef591;
+      border-bottom-right-radius: 0px;
+    }
+    .other-message {
+      background: #fcfcfc;
+      border-bottom-left-radius: 0px;
+    }
+
+    @keyframes show-anim {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-panel">
+    <div class="chat-messages-wrap">
+      <div class="chat-messages"></div>
+    </div>
+
+    <div class="chat-input">
+      <input type="text" name="message" placeholder="Enter a message">
+      <div class="button-send"></div>
+    </div>
+  </div>
+
+  <script>
+      const messagesContainer = document.querySelector(".chat-messages");
+    const inputField = document.querySelector('input[name="message"]');
+    const sendButton = document.querySelector(".button-send");
+
+    function addMessageView(view) {
+      messagesContainer.append(view);
+      view.scrollIntoView()
+    }
+
+    function createMessageView(text, isMyMessage) {
+      const view = document.createElement('span');
+      view.textContent = text;
+      view.classList.add("message");
+      if (isMyMessage) {
+        view.classList.add("my-message");
+      } else { 
+        view.classList.add("other-message");
+      }
+      return view;
+    }
+
+    function sendMessageByBot(text) {
+      setTimeout(() => {
+        const answerText = getAnswerText(text)
+        const view = createMessageView(answerText, false)
+        addMessageView(view);
+      }, 1000);
+    }
+
+    function getAnswerText(text) {
+      text = text.toLowerCase()
+      if (text.includes("hello")) {
+        return "IDC:Hello !";
+      }
+      if (text.includes("привет")) {
+        return "IDC:Привет!";
+      }
+      if (text.includes("?")) {
+        return "IDC: Нет свободных операторов ожидайте пожалуйста";
+      }
+      if (text.length > 30) {
+        return "IDC:Как интересно...))";
+      }
+      
+      return "IDC:Моя твоя не понимать";
+    }
+
+    function sendMessage() {
+      let message = inputField.value.trim()
+      if (message == "") return;
+
+      inputField.value = ""
+      addMessageView(createMessageView(message, true));
+
+      sendMessageByBot(message);
+    }
+
+    sendButton.onclick = sendMessage
+    inputField.onkeypress = function(event) {
+      if (event.code.toLowerCase() == "enter") {
+        sendMessage()
+      }
+    }
+  </script>
+</body>
+</html>
